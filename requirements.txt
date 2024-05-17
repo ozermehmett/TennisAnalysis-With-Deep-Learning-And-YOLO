@@ -1,5 +1,6 @@
 opencv-python~=4.9.0.80
 ultralytics~=8.2.16
-torch~=2.3.0+cu118
-torchvision~=0.18.0+cu118
+torch~=2.2.1+cu118
+torchvision~=0.17.1+cu118
 pandas~=2.2.2
+numpy~=1.26.4
