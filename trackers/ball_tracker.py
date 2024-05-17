@@ -24,6 +24,50 @@ class BallTracker:
 
         return ball_positions
 
+    import pandas as pd
+
+    def get_ball_shot_frames(self, ball_positions):
+        ball_positions = [x.get(1, []) for x in ball_positions]
+
+        # Veriyi pandas dataframe'e çevirme
+        df_ball_positions = pd.DataFrame(ball_positions, columns=['x1', 'y1', 'x2', 'y2'])
+
+        df_ball_positions['ball_hit'] = 0
+
+        # Orta noktayı ve farkları hesaplama
+        df_ball_positions['mid_y'] = (df_ball_positions['y1'] + df_ball_positions['y2']) / 2
+        df_ball_positions['mid_y_rolling_mean'] = df_ball_positions['mid_y'].rolling(window=5, min_periods=1).mean()
+        df_ball_positions['delta_y'] = df_ball_positions['mid_y_rolling_mean'].diff()
+
+        minimum_change_frames_for_hit = 25
+
+        for i in range(1, len(df_ball_positions) - int(minimum_change_frames_for_hit * 1.2)):
+            negative_position_change = df_ball_positions.loc[i, 'delta_y'] > 0 > df_ball_positions.loc[i + 1, 'delta_y']
+            positive_position_change = df_ball_positions.loc[i, 'delta_y'] < 0 < df_ball_positions.loc[i + 1, 'delta_y']
+
+            if negative_position_change or positive_position_change:
+                change_count = 0
+                for change_frame in range(i + 1, i + int(minimum_change_frames_for_hit * 1.2) + 1):
+                    if change_frame >= len(df_ball_positions):
+                        break
+                    negative_position_change_following_frame = (
+                            df_ball_positions.loc[i, 'delta_y'] > 0 > df_ball_positions.loc[change_frame, 'delta_y'])
+                    positive_position_change_following_frame = (
+                            df_ball_positions.loc[i, 'delta_y'] < 0 < df_ball_positions.loc[change_frame, 'delta_y'])
+
+                    if negative_position_change and negative_position_change_following_frame:
+                        change_count += 1
+                    elif positive_position_change and positive_position_change_following_frame:
+                        change_count += 1
+
+                if change_count > minimum_change_frames_for_hit - 1:
+                    df_ball_positions.loc[i, 'ball_hit'] = 1
+
+        frame_nums_with_ball_hits = df_ball_positions[df_ball_positions['ball_hit'] == 1].index.tolist()
+
+        return frame_nums_with_ball_hits
+
+
     def detect_frames(self, frames, read_from_stub=False, stub_path=None):
         ball_detections = list()
 
