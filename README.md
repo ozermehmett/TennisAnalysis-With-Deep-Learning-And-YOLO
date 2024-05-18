@@ -45,6 +45,9 @@ Follow these steps to set up and run the project:
 ## Sample Output
  Watch the sample output video to see the project in action:
 
+https://github.com/ozermehmett/TennisAnalysis-With-Deep-Learning-And-YOLO/assets/115498182/f50b4124-36a5-4447-abef-d67666a971ab
+
+
 ## Additional Notes
 - **Tennis Court Dimensions:** Refer to `tennis_court_dimensions.png` for detailed tennis court dimensions to enhance your analysis.
 - **Exploring the Code:** Delve into various modules such as `court_line_detector`, `trackers`, and `utils` to gain insights into the implementation details and customize the project according to your requirements.
