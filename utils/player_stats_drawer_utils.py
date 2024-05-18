@@ -3,6 +3,27 @@ import cv2
 
 
 def draw_player_stats(output_video_frames, player_stats):
+    """
+    Draws player statistics on the given video frames.
+
+    :param output_video_frames: list
+        The List of video frames on which the statistics will be drawn.
+
+    :param player_stats: pandas.DataFrame
+        A DataFrame containing the statistics for the players. Each row corresponds to a frame.
+        The DataFrame must contain the following columns:
+        - 'player_1_last_shot_speed'
+        - 'player_2_last_shot_speed'
+        - 'player_1_last_player_speed'
+        - 'player_2_last_player_speed'
+        - 'player_1_average_shot_speed'
+        - 'player_2_average_shot_speed'
+        - 'player_1_average_player_speed'
+        - 'player_2_average_player_speed'
+
+    :return: list
+        The List of video frames with the drawn statistics.
+    """
     for index, row in player_stats.iterrows():
         player_1_shot_speed = row['player_1_last_shot_speed']
         player_2_shot_speed = row['player_2_last_shot_speed']

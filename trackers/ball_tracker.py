@@ -7,11 +7,26 @@ import pandas as pd
 
 class BallTracker:
     def __init__(self, model_path):
+        """
+        Initializes the BallTracker class.
+
+        :param model_path: str
+            Path to the YOLO model.
+        """
         self.model = YOLO(model_path)
         self.device_type = torch.torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device_type)
 
     def interpolate_ball_positions(self, ball_positions):
+        """
+        Interpolates missing ball positions.
+
+        :param ball_positions: list
+            List of ball positions where each position is a dictionary with key 1.
+
+        :return: list
+            List of interpolated ball positions.
+        """
         ball_positions = [x.get(1, []) for x in ball_positions]
         # convert the list into pandas dataframe
         df_ball_positions = pd.DataFrame(ball_positions, columns=['x1', 'y1', 'x2', 'y2'])
@@ -27,6 +42,15 @@ class BallTracker:
     import pandas as pd
 
     def get_ball_shot_frames(self, ball_positions):
+        """
+        Identifies frames where the ball is hit based on its position changes.
+
+        :param ball_positions: list
+            List of ball positions where each position is a dictionary with key 1.
+
+        :return: list
+            List of frame numbers where the ball is hit.
+        """
         ball_positions = [x.get(1, []) for x in ball_positions]
 
         # Veriyi pandas dataframe'e çevirme
@@ -69,6 +93,21 @@ class BallTracker:
 
 
     def detect_frames(self, frames, read_from_stub=False, stub_path=None):
+        """
+        Detects ball positions in a list of video frames.
+
+        :param frames: list
+            List of video frames.
+
+        :param read_from_stub: bool, optional
+            Flag to read detections from a stub file.
+
+        :param stub_path: str, optional
+            Path to the stub file for reading/writing detections.
+
+        :return: list
+            List of ball detections for each frame.
+        """
         ball_detections = list()
 
         if read_from_stub and stub_path is not None:
@@ -87,6 +126,15 @@ class BallTracker:
         return ball_detections
 
     def detect_frame(self, frame):
+        """
+        Detects ball positions in a single video frame.
+
+        :param frame: np.ndarray
+            A single video frame.
+
+        :return: dict
+            A dictionary containing the ball detection coordinates.
+        """
         results = self.model.predict(frame, conf=0.15)[0]
 
         ball_dict = dict()
@@ -97,6 +145,18 @@ class BallTracker:
         return ball_dict
 
     def draw_boxes(self, video_frame, ball_detections):
+        """
+        Draws bounding boxes around detected balls in each frame.
+
+        :param video_frame: list
+            List of video frames.
+
+        :param ball_detections: list
+            List of ball detection dictionaries for each frame.
+
+        :return: list
+            List of video frames with drawn bounding boxes.
+        """
         output_video_frames = list()
         for frame, ball_dict in zip(video_frame, ball_detections):
             # Draw bounding boxes

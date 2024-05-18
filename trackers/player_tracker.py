@@ -9,12 +9,30 @@ from utils import measure_distance, get_center_of_box
 
 class PlayerTracker:
     def __init__(self, model_path):
+        """
+        Initializes the PlayerTracker class.
+
+        :param model_path: str
+            Path to the YOLO model.
+        """
         self.model = YOLO(model_path)
         self.device_type = torch.torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # print(self.device_type)
         self.model.to(self.device_type)
 
     def choose_and_filter_players(self, court_key_points, player_detections):
+        """
+        Chooses players based on their proximity to court key points and filters the detections accordingly.
+
+        :param court_key_points: list
+            The List of court key points.
+
+        :param player_detections: list
+            The List of player detections for each frame.
+
+        :return: list
+            The List of filtered player detections for each frame.
+        """
         player_detections_first_frame = player_detections[0]
         chosen_player = self.choose_players(court_key_points, player_detections_first_frame)
         filtered_player_detections = []
@@ -25,6 +43,18 @@ class PlayerTracker:
         return filtered_player_detections
 
     def choose_players(self, court_key_points, player_dict):
+        """
+        Chooses players based on their distance to court key points.
+
+        :param court_key_points: list
+            The List of court key points.
+
+        :param player_dict: dict
+            Dictionary of player detections for a single frame.
+
+        :return: list
+            The List of chosen player track IDs.
+        """
         distances = list()
         for track_id, box in player_dict.items():
             player_center = get_center_of_box(box)
@@ -45,6 +75,21 @@ class PlayerTracker:
 
 
     def detect_frames(self, frames, read_from_stub=False, stub_path=None):
+        """
+        Detects player positions in a list of video frames.
+
+        :param frames: list
+            The List of video frames.
+
+        :param read_from_stub: bool, optional
+            Flag to read detections from a stub file.
+
+        :param stub_path: str, optional
+            Path to the stub file for reading/writing detections.
+
+        :return: list
+            The List of player detections for each frame.
+        """
         players_detections = list()
 
         if read_from_stub and stub_path is not None:
@@ -63,6 +108,15 @@ class PlayerTracker:
         return players_detections
 
     def detect_frame(self, frame):
+        """
+        Detects player positions in a single video frame.
+
+        :param frame: np.ndarray
+            A single video frame.
+
+        :return: dict
+            A dictionary containing player detection coordinates with track IDs.
+        """
         results = self.model.track(frame, persist=True)[0]
         id_name_dict = results.names
 
@@ -78,6 +132,18 @@ class PlayerTracker:
         return player_dict
 
     def draw_boxes(self, video_frame, players_detections):
+        """
+        Draws bounding boxes around detected players in each frame.
+
+        :param video_frame: list
+            The List of video frames.
+
+        :param players_detections: list
+            The List of player detection dictionaries for each frame.
+
+        :return: list
+            The List of video frames with drawn bounding boxes.
+        """
         output_video_frames = list()
         for frame, player_dict in zip(video_frame, players_detections):
             # Draw bounding boxes
