@@ -14,6 +14,25 @@ this project provides an immersive learning experience in computer vision and sp
 - **Shot Counting:** Counts the number of shots made by each player, facilitating detailed performance analysis.
 - **Court Key points:** Extracts key points from the tennis court, enabling advanced spatial analysis and visualization.
 
+## Repository Contents
+   - The repository contains various components, including:
+     - `constants`: Constants used in the project.
+     - `court_line_detector`: Detection of court lines.
+     - `input_videos`: Input video files.
+     - `models`: Model-related files.
+     - `output_videos`: Output video files.
+     - `runs`: Detection and prediction runs.
+     - `tracker_stubs`: Tracker stubs.
+     - `trackers`: Tracking components.
+     - `training`: Training-related files.
+     - `utils`: Utility functions.
+     - `Main.py`: Main script for the project.
+     - `cuda_installl`: CUDA installation information.
+     - `requirements.txt`: Required Python packages.
+     - `tennis_court_dimensions.png`: Tennis court dimensions reference.
+     - `yolo_interface.py`: Interface for YOLO-based detection⁵.
+
+
 ## Getting Started
 Follow these steps to set up and run the project:
 
